@@ -1,0 +1,13 @@
+#IDEA
+.idea/
+#compile temp obj
+*.o
+
+#cmake temp
+cmake-build-debug/
+
+#lex bison temp
+lex.yy.c
+y.output
+y.tab.c
+y.tab.h
