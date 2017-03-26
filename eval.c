@@ -789,7 +789,7 @@ static BEE_Value evalExpression(BEE_Parser *parser, LocalEnvironment *env, Expre
     return v;
 }
 
-BEE_Value bee_evalExpression(BEE_Parser *parser, LocalEnvironment *env, Expression *expr)
+BEE_Value beeEvalExpression(BEE_Parser *parser, LocalEnvironment *env, Expression *expr)
 {
     return evalExpression(parser, env, expr);
 }

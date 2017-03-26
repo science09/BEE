@@ -231,8 +231,7 @@ static StatementResult executeReturnStatement(BEE_Parser *parser, LocalEnvironme
     result.type = RETURN_STATEMENT_RESULT;
     if (statement->u.return_s.return_value)
     {
-        result.u.return_value = beeEvalExpression(parser, env,
-                                      statement->u.return_s.return_value);
+        result.u.return_value = beeEvalExpression(parser, env, statement->u.return_s.return_value);
     }
     else
     {

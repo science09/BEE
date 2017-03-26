@@ -30,30 +30,19 @@ extern MEM_Controller mem_default_controller;
  * There are private functions of MEM module.
  */
 MEM_Controller MEM_create_controller(void);
-void *MEM_malloc_func(MEM_Controller controller,
-                      char *filename, int line, size_t size);
-void *MEM_realloc_func(MEM_Controller controller,
-                       char *filename, int line, void *ptr, size_t size);
-char *MEM_strdup_func(MEM_Controller controller,
-                      char *filename, int line, char *str);
-MEM_Storage MEM_open_storage_func(MEM_Controller controller,
-                                  char *filename, int line, int page_size);
-void *MEM_storage_malloc_func(MEM_Controller controller,
-                              char *filename, int line,
-                              MEM_Storage storage, size_t size);
+void *MEM_malloc_func(MEM_Controller controller, char *filename, int line, size_t size);
+void *MEM_realloc_func(MEM_Controller controller, char *filename, int line, void *ptr, size_t size);
+char *MEM_strdup_func(MEM_Controller controller, char *filename, int line, char *str);
+MEM_Storage MEM_open_storage_func(MEM_Controller controller, char *filename, int line, int page_size);
+void *MEM_storage_malloc_func(MEM_Controller controller, char *filename, int line, MEM_Storage storage, size_t size);
 void MEM_free_func(MEM_Controller controller, void *ptr);
-void MEM_dispose_storage_func(MEM_Controller controller,
-                              MEM_Storage storage);
+void MEM_dispose_storage_func(MEM_Controller controller, MEM_Storage storage);
 
-void MEM_set_error_handler(MEM_Controller controller,
-                           MEM_ErrorHandler handler);
-void MEM_set_fail_mode(MEM_Controller controller,
-                       MEM_FailMode mode);
+void MEM_set_error_handler(MEM_Controller controller, MEM_ErrorHandler handler);
+void MEM_set_fail_mode(MEM_Controller controller, MEM_FailMode mode);
 void MEM_dump_blocks_func(MEM_Controller controller, FILE *fp);
-void MEM_check_block_func(MEM_Controller controller,
-                          char *filename, int line, void *p);
-void MEM_check_all_blocks_func(MEM_Controller controller,
-                               char *filename, int line);
+void MEM_check_block_func(MEM_Controller controller, char *filename, int line, void *p);
+void MEM_check_all_blocks_func(MEM_Controller controller, char *filename, int line);
 
 #define MEM_malloc(size)\
   (MEM_malloc_func(MEM_CURRENT_CONTROLLER,\

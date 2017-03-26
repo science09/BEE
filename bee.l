@@ -14,7 +14,7 @@ yywrap(void)
 static void
 increment_line_number(void)
 {
-    crb_get_current_interpreter()->current_line_number++;
+    beeGetCurrentParser()->current_line_number++;
 }
 %}
 %start COMMENT STRING_LITERAL_STATE
@@ -53,23 +53,23 @@ increment_line_number(void)
 <INITIAL>"/"            return DIV;
 <INITIAL>"%"            return MOD;
 <INITIAL>[A-Za-z_][A-Za-z_0-9]* {
-    yylval.identifier = crb_create_identifier(yytext);
+    yylval.identifier = beeCreateIdentifier(yytext);
     return IDENTIFIER;
 }
 <INITIAL>([1-9][0-9]*)|"0" {
-    Expression  *expression = crb_alloc_expression(INT_EXPRESSION);
-    sscanf(yytext, "%d", &expression->u.int_value);
+    Expression  *expression = beeAllocExpression(INT_EXPRESSION);
+    sscanf(yytext, "%ld", &expression->u.long_value);
     yylval.expression = expression;
     return INT_LITERAL;
 }
 <INITIAL>[0-9]+\.[0-9]+ {
-    Expression  *expression = crb_alloc_expression(DOUBLE_EXPRESSION);
+    Expression  *expression = beeAllocExpression(DOUBLE_EXPRESSION);
     sscanf(yytext, "%lf", &expression->u.double_value);
     yylval.expression = expression;
     return DOUBLE_LITERAL;
 }
 <INITIAL>\" {
-    crb_open_string_literal();
+    beeOpenStringLiteral();
     BEGIN STRING_LITERAL_STATE;
 }
 <INITIAL>[ \t] ;
@@ -85,7 +85,7 @@ increment_line_number(void)
         sprintf(buf, "0x%02x", (unsigned char)yytext[0]);
     }
 
-    crb_compile_error(CHARACTER_INVALID_ERR,
+    beeCompileError(CHARACTER_INVALID_ERR,
                       STRING_MESSAGE_ARGUMENT, "bad_char", buf,
                       MESSAGE_ARGUMENT_END);
 }
@@ -95,19 +95,19 @@ increment_line_number(void)
 }
 <COMMENT>.      ;
 <STRING_LITERAL_STATE>\"        {
-    Expression *expression = crb_alloc_expression(STRING_EXPRESSION);
-    expression->u.string_value = crb_close_string_literal();
+    Expression *expression = beeAllocExpression(STRING_EXPRESSION);
+    expression->u.string_value = beeCloseStringLiteral();
     yylval.expression = expression;
     BEGIN INITIAL;
     return STRING_LITERAL;
 }
 <STRING_LITERAL_STATE>\n        {
-    crb_add_string_literal('\n');
+    beeAddStringLiteral('\n');
     increment_line_number();
 }
-<STRING_LITERAL_STATE>\\\"      crb_add_string_literal('"');
-<STRING_LITERAL_STATE>\\n       crb_add_string_literal('\n');
-<STRING_LITERAL_STATE>\\t       crb_add_string_literal('\t');
-<STRING_LITERAL_STATE>\\\\      crb_add_string_literal('\\');
-<STRING_LITERAL_STATE>.         crb_add_string_literal(yytext[0]);
+<STRING_LITERAL_STATE>\\\"      beeAddStringLiteral('"');
+<STRING_LITERAL_STATE>\\n       beeAddStringLiteral('\n');
+<STRING_LITERAL_STATE>\\t       beeAddStringLiteral('\t');
+<STRING_LITERAL_STATE>\\\\      beeAddStringLiteral('\\');
+<STRING_LITERAL_STATE>.         beeAddStringLiteral(yytext[0]);
 %%

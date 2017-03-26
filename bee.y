@@ -44,7 +44,7 @@ definition_or_statement
         : function_definition
         | statement
         {
-            CRB_Interpreter *inter = beeGetCurrentParser();
+            BEE_Parser *inter = beeGetCurrentParser();
 
             inter->statement_list
                 = beeChainStatementList(inter->statement_list, $1);
@@ -196,15 +196,15 @@ primary_expression
         | STRING_LITERAL
         | TRUE_T
         {
-            $$ = beeCreateBooleanExpression(CRB_TRUE);
+            $$ = beeCreateBooleanExpression(BEE_TRUE);
         }
         | FALSE_T
         {
-            $$ = beeCreateBooleanExpression(CRB_FALSE);
+            $$ = beeCreateBooleanExpression(BEE_FALSE);
         }
         | NULL_T
         {
-            $$ = beeCreatenull_expression();
+            $$ = beeCreateNullExpression();
         }
         ;
 statement
