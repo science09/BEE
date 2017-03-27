@@ -2,9 +2,13 @@
 // Created by hadoop on 17-3-22.
 //
 
+#include <stdio.h>
 #include "MEM.h"
 #include "DBG.h"
 #include "bee_def.h"
+
+#include "y.tab.h"
+#include "lex.yy.h"
 
 static void addBuiltinFunctions(BEE_Parser *parser)
 {
@@ -37,17 +41,20 @@ BEE_Parser * BEE_CreateParser(void)
 
 void BEE_Compile(BEE_Parser *parser, FILE *fp)
 {
-    extern int yyparse(void);
-    extern FILE *yyin;
-
+//    extern int yyparse(void);
+//    extern FILE *yyin;
+    yyscan_t scanner;
     beeSetCurrentParser(parser);
-    yyin = fp;
-    if (yyparse()) {
+//    yyin = fp;
+    yylex_init(&scanner);
+    yyset_in(fp, scanner);
+    if (yyparse(scanner)) {
         /* BUGBUG */
         fprintf(stderr, "Error ! Error ! Error !\n");
         exit(1);
     }
     beeResetStringLiteralBuffer();
+    yylex_destroy(scanner);
 }
 
 void BEE_Parse(BEE_Parser *parser)

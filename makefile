@@ -21,7 +21,7 @@ INCLUDES = \
 $(TARGET):$(OBJS)
 	cd ./memory; $(MAKE);
 	cd ./debug; $(MAKE);
-	$(CC) $(OBJS) -o $@ -lm
+	$(CC) $(OBJS) -o $@ -lm -pthread
 clean:
 	rm -f *.o lex.yy.c y.tab.c y.tab.h *~
 y.tab.h : bee.y

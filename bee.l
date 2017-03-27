@@ -5,18 +5,17 @@
 #include "bee_def.h"
 #include "y.tab.h"
 
-int
-yywrap(void)
-{
-    return 1;
-}
 
-static void
-increment_line_number(void)
+static void increment_line_number(void)
 {
     beeGetCurrentParser()->current_line_number++;
 }
 %}
+
+%option reentrant bison-bridge
+%option warn noyywrap nodefault
+%option header-file="lex.yy.h"
+
 %start COMMENT STRING_LITERAL_STATE
 %%
 <INITIAL>"function"     return FUNCTION;
@@ -53,19 +52,19 @@ increment_line_number(void)
 <INITIAL>"/"            return DIV;
 <INITIAL>"%"            return MOD;
 <INITIAL>[A-Za-z_][A-Za-z_0-9]* {
-    yylval.identifier = beeCreateIdentifier(yytext);
+    yylval->identifier = beeCreateIdentifier(yytext);
     return IDENTIFIER;
 }
 <INITIAL>([1-9][0-9]*)|"0" {
     Expression  *expression = beeAllocExpression(INT_EXPRESSION);
     sscanf(yytext, "%ld", &expression->u.long_value);
-    yylval.expression = expression;
+    yylval->expression = expression;
     return INT_LITERAL;
 }
 <INITIAL>[0-9]+\.[0-9]+ {
     Expression  *expression = beeAllocExpression(DOUBLE_EXPRESSION);
     sscanf(yytext, "%lf", &expression->u.double_value);
-    yylval.expression = expression;
+    yylval->expression = expression;
     return DOUBLE_LITERAL;
 }
 <INITIAL>\" {
@@ -97,7 +96,7 @@ increment_line_number(void)
 <STRING_LITERAL_STATE>\"        {
     Expression *expression = beeAllocExpression(STRING_EXPRESSION);
     expression->u.string_value = beeCloseStringLiteral();
-    yylval.expression = expression;
+    yylval->expression = expression;
     BEGIN INITIAL;
     return STRING_LITERAL;
 }

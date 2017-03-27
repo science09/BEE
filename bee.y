@@ -1,8 +1,30 @@
 %{
 #include <stdio.h>
 #include "bee_def.h"
+
+#include "y.tab.h"
+#include "lex.yy.h"
+
 #define YYDEBUG 1
+void yyerror(yyscan_t scanner, char const *msg);
+
+typedef struct ParameterList;
+typedef struct ArgumentList;
+typedef struct Expression;
+typedef struct Statement;
+typedef struct StatementList;
+typedef struct Block;
+typedef struct Elsif;
+typedef struct IdentifierList;
+
 %}
+
+
+%define parse.error verbose
+%define api.pure
+%lex-param {void * scanner}
+%parse-param {void * scanner}
+
 %union {
     char                *identifier;
     ParameterList       *parameter_list;
@@ -14,6 +36,7 @@
     Elsif               *elsif;
     IdentifierList      *identifier_list;
 }
+
 %token <expression>     INT_LITERAL
 %token <expression>     DOUBLE_LITERAL
 %token <expression>     STRING_LITERAL

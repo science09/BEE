@@ -1,0 +1,7 @@
+for (;;) {
+    print(" i.." + i);
+    if (i > 5) {
+	break;
+    }
+    i = i + 1;
+}

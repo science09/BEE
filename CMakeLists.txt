@@ -23,6 +23,8 @@ add_custom_command(
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 
+#include_directories(memory debug)
+
 set(SOURCE_FILES
         main.c
         MEM.h
@@ -40,7 +42,8 @@ set(SOURCE_FILES
         builtin.c
         execute.c
         lex.yy.c
-        y.tab.c memory/memory.h memory/memory.c memory/storage.c debug/debug.h)
+        y.tab.c
+        memory/memory.h memory/memory.c memory/storage.c debug/debug.h)
 add_executable(Bee ${SOURCE_FILES})
 
 target_link_libraries(Bee m)

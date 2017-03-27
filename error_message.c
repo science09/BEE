@@ -40,7 +40,7 @@ MessageFormat beeRuntimeErrorMessageFormat[] = {
         {"dummy"},
 };
 
-extern char * yytext;
+//extern char * yytext;
 
 typedef struct {
     char    *string;
@@ -272,12 +272,13 @@ void beeRuntimeError(int line_number, RuntimeError id, ...)
 int yyerror(char const *str)
 {
     char *near_token;
-
-    if (yytext[0] == '\0') {
-        near_token = "EOF";
-    } else {
-        near_token = yytext;
-    }
+    near_token = "EOF";
+//
+//    if (yytext[0] == '\0') {
+//        near_token = "EOF";
+//    } else {
+//        near_token = yytext;
+//    }
     beeCompileError(PARSE_ERR, STRING_MESSAGE_ARGUMENT, "token", near_token, MESSAGE_ARGUMENT_END);
 
     return 0;
