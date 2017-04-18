@@ -1,6 +1,6 @@
 TARGET = dbg.o
-CC=gcc
-CFLAGS = -c -g -Wall -DDBG_NO_DEBUG -ansi -pedantic -std=c99
+CC=g++
+CFLAGS = -c -g -Wall -DDBG_NO_DEBUG -ansi -pedantic -std=c++11
 OBJS = debug.o
 INCLUDES = -I..
 

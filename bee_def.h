@@ -280,6 +280,9 @@ struct BEE_Parser_tag {
     FunctionDefinition  *function_list;
     StatementList       *statement_list;
     int                 current_line_number;
+    char                *st_string_literal_buffer;
+    size_t              st_string_literal_buffer_size;
+    size_t              st_string_literal_buffer_alloc_size;
 };
 
 

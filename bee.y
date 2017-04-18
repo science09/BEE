@@ -6,8 +6,10 @@
 #include "lex.yy.h"
 
 #define YYDEBUG 1
-void yyerror(yyscan_t scanner, char const *msg);
 
+void yyerror(yyscan_t scanner, char const *msg) {};
+
+/*
 typedef struct ParameterList;
 typedef struct ArgumentList;
 typedef struct Expression;
@@ -16,7 +18,7 @@ typedef struct StatementList;
 typedef struct Block;
 typedef struct Elsif;
 typedef struct IdentifierList;
-
+*/
 %}
 
 

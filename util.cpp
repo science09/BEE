@@ -4,28 +4,28 @@
 
 #include <stdio.h>
 #include <string.h>
-//#include <map>
-//#include <thread>
+#include <map>
+#include <thread>
 #include "MEM.h"
 #include "DBG.h"
 #include "bee_def.h"
 
-static BEE_Parser *st_current_parser;
+//static BEE_Parser *st_current_parser;
 
-//static std::map<std::thread::id, BEE_Parser *> st_current_parser;
+static std::map<std::thread::id, BEE_Parser *> st_current_parser;
 
 
 BEE_Parser * beeGetCurrentParser(void)
 {
-//    return st_current_parser[std::this_thread::get_id()];
-    return st_current_parser;
+    return st_current_parser[std::this_thread::get_id()];
+//    return st_current_parser;
 }
 
 
 void beeSetCurrentParser(BEE_Parser *parser)
 {
-//    st_current_parser[std::this_thread::get_id()] = parser;
-    st_current_parser = parser;
+    st_current_parser[std::this_thread::get_id()] = parser;
+//    st_current_parser = parser;
 }
 
 

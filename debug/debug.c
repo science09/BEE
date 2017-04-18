@@ -23,7 +23,7 @@ DBG_Controller DBG_create_controller_func(void)
 {
     DBG_Controller      controller;
 
-    controller = MEM_malloc(sizeof(struct DBG_Controller_tag));
+    controller = (DBG_Controller)MEM_malloc(sizeof(struct DBG_Controller_tag));
     controller->debug_write_fp = NULL;
     controller->current_debug_level = INT_MAX;
 

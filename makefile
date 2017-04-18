@@ -31,13 +31,13 @@ y.tab.c : bee.y
 lex.yy.c : bee.l bee.y y.tab.h
 	flex bee.l
 y.tab.o: y.tab.c bee_def.h MEM.h
-	gcc -c -g $*.c $(INCLUDES)
+	g++ -c -g $*.c $(INCLUDES)
 lex.yy.o: lex.yy.c bee_def.h MEM.h
-	gcc -c -g $*.c $(INCLUDES)
+	g++ -c -g $*.c $(INCLUDES)
 .c.o:
 	$(CC) $(CFLAGS) $*.c $(INCLUDES)
 .cpp.o:
-	$(CC) $(CFLAGS) -std=c++11 $*.cpp $(INCLUDES)
+	$(CC) $(CFLAGS) $*.cpp $(INCLUDES)
 
 ./memory/mem.o:
 	cd ./memory; $(MAKE);
@@ -54,4 +54,4 @@ main.o: main.cpp BEE.h MEM.h
 builtin.o: builtin.c MEM.h DBG.h bee_def.h BEE.h BEE_dev.h
 string.o: string.c MEM.h bee_def.h BEE.h BEE_dev.h
 string_pool.o: string_pool.c MEM.h DBG.h bee_def.h BEE.h BEE_dev.h
-util.o: util.c MEM.h DBG.h bee_def.h BEE.h BEE_dev.h
+util.o: util.cpp MEM.h DBG.h bee_def.h BEE.h BEE_dev.h

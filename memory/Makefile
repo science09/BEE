@@ -1,6 +1,6 @@
 TARGET = mem.o
-CC=gcc
-CFLAGS = -c -g -DDEBUG -Wall -ansi -pedantic -std=c99
+CC=g++
+CFLAGS = -c -g -DDEBUG -Wall -ansi -pedantic -std=c++11
 OBJS = memory.o storage.o
 
 $(TARGET):$(OBJS)

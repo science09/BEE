@@ -3,17 +3,18 @@
 #include <stdio.h>
 #include "BEE.h"
 #include "MEM.h"
-#include <pthread.h>
-#include <c++/5/thread>
+#include <thread>
 
 
 
 #define LEN  2
 
-void test_routine(BEE_Parser *parser)
+void test_routine()
 {
-    BEE_Parser     *interpreter;
+
+    BEE_Parser     *parser;
     FILE *fp;
+    parser = BEE_CreateParser();
     fp = fopen("test/t.bee", "r");
     if (fp == NULL) {
         fprintf(stderr, "%s not found.\n", "test/t.bee");
@@ -23,12 +24,12 @@ void test_routine(BEE_Parser *parser)
     BEE_Compile(parser, fp);
     BEE_Parse(parser);
 
+    BEE_DestroyParser(parser);
 }
 
 
 int main(int argc, char **argv)
 {
-
     BEE_Parser     *parser;
     FILE *fp;
     pthread_t  tid[LEN];
@@ -39,23 +40,18 @@ int main(int argc, char **argv)
         exit(1);
     }
 */
-    parser = BEE_CreateParser();
+
     std::thread th[LEN];
 
-//    for (int i = 0; i < LEN; ++i) {
-//        ret = pthread_create(&tid[i], NULL, (void *)test_routine, (void*)parser);
-//        if (ret != 0)
-//        {
-//            perror("create thread error!");
-//            return -1;
-//        }
-//    }
-//
-//    for (int i = 0; i < LEN; ++i) {
-//        pthread_join(tid[i], NULL);
-//    }
+    for (int i = 0; i < LEN; ++i) {
+        th[i] = std::thread(test_routine);
+    }
 
-    BEE_DestroyParser(parser);
+    for (int i = 0; i < LEN; ++i) {
+        th[i].join();
+    }
+
+
 
 //    fp = fopen("test/test.bee", "r");
 //    if (fp == NULL) {

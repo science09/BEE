@@ -32,7 +32,7 @@ set(SOURCE_FILES
         BEE.h
         BEE_dev.h
         bee_def.h
-        util.c
+        util.cpp
         string.c
         string_pool.c
         error_message.c
