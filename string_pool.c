@@ -12,7 +12,7 @@ static BEE_String *allocBeeString(BEE_Parser *parser, char *str, BEE_Boolean is_
 {
     BEE_String *ret;
 
-    ret = MEM_malloc(sizeof(BEE_String));
+    ret = (BEE_String *)MEM_malloc(sizeof(BEE_String));
     ret->ref_count = 0;
     ret->is_literal = is_literal;
     ret->string = str;

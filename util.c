@@ -4,20 +4,27 @@
 
 #include <stdio.h>
 #include <string.h>
+//#include <map>
+//#include <thread>
 #include "MEM.h"
 #include "DBG.h"
 #include "bee_def.h"
 
 static BEE_Parser *st_current_parser;
 
+//static std::map<std::thread::id, BEE_Parser *> st_current_parser;
+
 
 BEE_Parser * beeGetCurrentParser(void)
 {
+//    return st_current_parser[std::this_thread::get_id()];
     return st_current_parser;
 }
 
+
 void beeSetCurrentParser(BEE_Parser *parser)
 {
+//    st_current_parser[std::this_thread::get_id()] = parser;
     st_current_parser = parser;
 }
 
@@ -88,7 +95,7 @@ void beeAddLocalVariable(LocalEnvironment *env, char *identifier, BEE_Value *val
 {
     Variable    *new_variable;
 
-    new_variable = MEM_malloc(sizeof(Variable));
+    new_variable = (Variable *)MEM_malloc(sizeof(Variable));
     new_variable->name = identifier;
     new_variable->value = *value;
     new_variable->next = env->variable;
@@ -99,8 +106,8 @@ void BEE_AddGlobalVariable(BEE_Parser *parser, char *identifier, BEE_Value *valu
 {
     Variable    *new_variable;
 
-    new_variable = beeExecuteMalloc(parser, sizeof(Variable));
-    new_variable->name = beeExecuteMalloc(parser, strlen(identifier) + 1);
+    new_variable = (Variable *)beeExecuteMalloc(parser, sizeof(Variable));
+    new_variable->name = (char *)beeExecuteMalloc(parser, strlen(identifier) + 1);
     strcpy(new_variable->name, identifier);
     new_variable->next = parser->variable;
     parser->variable = new_variable;

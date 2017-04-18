@@ -26,7 +26,7 @@ add_custom_command(
 #include_directories(memory debug)
 
 set(SOURCE_FILES
-        main.c
+        main.cpp
         MEM.h
         DBG.h
         BEE.h
@@ -43,7 +43,7 @@ set(SOURCE_FILES
         execute.c
         lex.yy.c
         y.tab.c
-        memory/memory.h memory/memory.c memory/storage.c debug/debug.h)
+        memory/memory.h memory/memory.c memory/storage.c debug/debug.h test.cpp)
 add_executable(Bee ${SOURCE_FILES})
 
 target_link_libraries(Bee m)

@@ -293,7 +293,7 @@ StatementList *beeCreateStatementList(Statement *statement);
 StatementList *beeChainStatementList(StatementList *list, Statement *statement);
 Expression *beeAllocExpression(ExpressionType type);
 Expression *beeCreateAssignExpression(char *variable, Expression *operand);
-Expression *beeCreateBinaryExpression(ExpressionType operator, Expression *left, Expression *right);
+Expression *beeCreateBinaryExpression(ExpressionType expressType, Expression *left, Expression *right);
 Expression *beeCreateMinusExpression(Expression *operand);
 Expression *beeCreateIdentifierExpression(char *identifier);
 Expression *beeCreateFunctionCallExpression(char *func_name, ArgumentList *argument);
@@ -328,7 +328,7 @@ StatementResult beeExecuteStatementList(BEE_Parser *inter, LocalEnvironment *env
 /* eval.c */
 BEE_Value beeEvalBinaryExpression(BEE_Parser *inter,
                                      LocalEnvironment *env,
-                                     ExpressionType operator,
+                                     ExpressionType expressionType,
                                      Expression *left, Expression *right);
 BEE_Value beeEvalMinusExpression(BEE_Parser *inter, LocalEnvironment *env, Expression *operand);
 BEE_Value beeEvalExpression(BEE_Parser *inter, LocalEnvironment *env, Expression *expr);

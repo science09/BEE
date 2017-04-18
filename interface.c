@@ -25,7 +25,7 @@ BEE_Parser * BEE_CreateParser(void)
     BEE_Parser *parser;
 
     storage = MEM_open_storage(0);
-    parser = MEM_storage_malloc(storage, sizeof(BEE_Parser));
+    parser = (BEE_Parser *)MEM_storage_malloc(storage, sizeof(BEE_Parser));
     parser->parser_storage = storage;
     parser->execute_storage = NULL;
     parser->variable = NULL;
@@ -64,7 +64,8 @@ void BEE_Parse(BEE_Parser *parser)
     beeExecuteStatementList(parser, NULL, parser->statement_list);
 }
 
-static void releaseGlobalStrings(BEE_Parser *parser) {
+static void releaseGlobalStrings(BEE_Parser *parser)
+{
     while (parser->variable)
     {
         Variable *temp = parser->variable;
@@ -92,7 +93,7 @@ void BEE_AddBuiltinFunction(BEE_Parser *parser, char *name, BEE_NativeFunctionPr
 {
     FunctionDefinition *fd;
 
-    fd = beeMalloc(sizeof(FunctionDefinition));
+    fd = (FunctionDefinition *)beeMalloc(sizeof(FunctionDefinition));
     fd->name = name;
     fd->type = BUILTIN_FUNCTION_DEFINITION;
     fd->u.native_f.proc = proc;

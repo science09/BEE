@@ -159,48 +159,48 @@ static BEE_Value evalAssignExpression(BEE_Parser *parser, LocalEnvironment *env,
     return v;
 }
 
-static BEE_Boolean evalBinaryBoolean(BEE_Parser *parser, ExpressionType operator,
+static BEE_Boolean evalBinaryBoolean(BEE_Parser *parser, ExpressionType expressType,
                     BEE_Boolean left, BEE_Boolean right, int line_number)
 {
     BEE_Boolean result;
 
-    if (operator == EQ_EXPRESSION) 
+    if (expressType == EQ_EXPRESSION) 
     {
-        result = left == right;
+        result = (BEE_Boolean)(left == right);
     }
-    else if (operator == NE_EXPRESSION) 
+    else if (expressType == NE_EXPRESSION) 
     {
-        result = left != right;
+        result = (BEE_Boolean)(left != right);
     } 
     else
     {
-        char *op_str = beeGetOperatorString(operator);
+        char *op_str = beeGetOperatorString(expressType);
         beeRuntimeError(line_number, NOT_BOOLEAN_OPERATOR_ERR,
-                          STRING_MESSAGE_ARGUMENT, "operator", op_str,
+                          STRING_MESSAGE_ARGUMENT, "expressType", op_str,
                           MESSAGE_ARGUMENT_END);
     }
 
     return result;
 }
 
-static void evalBinaryInt(BEE_Parser *parser, ExpressionType operator,
+static void evalBinaryInt(BEE_Parser *parser, ExpressionType expressType,
                 int left, int right,
                 BEE_Value *result, int line_number)
 {
-    if (dkc_is_math_operator(operator))
+    if (dkc_is_math_operator(expressType))
     {
         result->type = BEE_LONG_VALUE;
     }
-    else if (dkc_is_compare_operator(operator))
+    else if (dkc_is_compare_operator(expressType))
     {
         result->type = BEE_BOOLEAN_VALUE;
     }
     else
     {
-        DBG_panic(("operator..%d\n", operator));
+        DBG_panic(("expressType..%d\n", expressType));
     }
 
-    switch (operator)
+    switch (expressType)
     {
         case BOOLEAN_EXPRESSION:    /* FALLTHRU */
         case INT_EXPRESSION:        /* FALLTHRU */
@@ -208,7 +208,7 @@ static void evalBinaryInt(BEE_Parser *parser, ExpressionType operator,
         case STRING_EXPRESSION:     /* FALLTHRU */
         case IDENTIFIER_EXPRESSION: /* FALLTHRU */
         case ASSIGN_EXPRESSION:
-            DBG_panic(("bad case...%d", operator));
+            DBG_panic(("bad case...%d", expressType));
             break;
         case ADD_EXPRESSION:
             result->u.long_value = left + right;
@@ -227,53 +227,53 @@ static void evalBinaryInt(BEE_Parser *parser, ExpressionType operator,
             break;
         case LOGICAL_AND_EXPRESSION:        /* FALLTHRU */
         case LOGICAL_OR_EXPRESSION:
-            DBG_panic(("bad case...%d", operator));
+            DBG_panic(("bad case...%d", expressType));
             break;
         case EQ_EXPRESSION:
-            result->u.boolean_value = left == right;
+            result->u.boolean_value = (BEE_Boolean)(left == right);
             break;
         case NE_EXPRESSION:
-            result->u.boolean_value = left != right;
+            result->u.boolean_value = (BEE_Boolean)(left != right);
             break;
         case GT_EXPRESSION:
-            result->u.boolean_value = left > right;
+            result->u.boolean_value = (BEE_Boolean)(left > right);
             break;
         case GE_EXPRESSION:
-            result->u.boolean_value = left >= right;
+            result->u.boolean_value = (BEE_Boolean)(left >= right);
             break;
         case LT_EXPRESSION:
-            result->u.boolean_value = left < right;
+            result->u.boolean_value = (BEE_Boolean)(left < right);
             break;
         case LE_EXPRESSION:
-            result->u.boolean_value = left <= right;
+            result->u.boolean_value = (BEE_Boolean)(left <= right);
             break;
         case MINUS_EXPRESSION:              /* FALLTHRU */
         case FUNCTION_CALL_EXPRESSION:      /* FALLTHRU */
         case NULL_EXPRESSION:               /* FALLTHRU */
         case EXPRESSION_TYPE_COUNT_PLUS_1:  /* FALLTHRU */
         default:
-            DBG_panic(("bad case...%d", operator));
+            DBG_panic(("bad case...%d", expressType));
     }
 }
 
-static void evalBinaryDouble(BEE_Parser *parser, ExpressionType operator,
+static void evalBinaryDouble(BEE_Parser *parser, ExpressionType expressType,
                    double left, double right,
                    BEE_Value *result, int line_number)
 {
-    if (dkc_is_math_operator(operator))
+    if (dkc_is_math_operator(expressType))
     {
         result->type = BEE_DOUBLE_VALUE;
     }
-    else if (dkc_is_compare_operator(operator))
+    else if (dkc_is_compare_operator(expressType))
     {
         result->type = BEE_BOOLEAN_VALUE;
     }
     else
     {
-        DBG_panic(("operator..%d\n", operator));
+        DBG_panic(("expressType..%d\n", expressType));
     }
 
-    switch (operator)
+    switch (expressType)
     {
         case BOOLEAN_EXPRESSION:    /* FALLTHRU */
         case INT_EXPRESSION:        /* FALLTHRU */
@@ -281,7 +281,7 @@ static void evalBinaryDouble(BEE_Parser *parser, ExpressionType operator,
         case STRING_EXPRESSION:     /* FALLTHRU */
         case IDENTIFIER_EXPRESSION: /* FALLTHRU */
         case ASSIGN_EXPRESSION:
-            DBG_panic(("bad case...%d", operator));
+            DBG_panic(("bad case...%d", expressType));
             break;
         case ADD_EXPRESSION:
             result->u.double_value = left + right;
@@ -300,7 +300,7 @@ static void evalBinaryDouble(BEE_Parser *parser, ExpressionType operator,
             break;
         case LOGICAL_AND_EXPRESSION:        /* FALLTHRU */
         case LOGICAL_OR_EXPRESSION:
-            DBG_panic(("bad case...%d", operator));
+            DBG_panic(("bad case...%d", expressType));
             break;
         case EQ_EXPRESSION:
             result->u.long_value = left == right;
@@ -325,11 +325,11 @@ static void evalBinaryDouble(BEE_Parser *parser, ExpressionType operator,
         case NULL_EXPRESSION:               /* FALLTHRU */
         case EXPRESSION_TYPE_COUNT_PLUS_1:  /* FALLTHRU */
         default:
-            DBG_panic(("bad default...%d", operator));
+            DBG_panic(("bad default...%d", expressType));
     }
 }
 
-static BEE_Boolean evalCompareString(ExpressionType operator,
+static BEE_Boolean evalCompareString(ExpressionType expressType,
                     BEE_Value *left, BEE_Value *right, int line_number)
 {
     BEE_Boolean result;
@@ -337,22 +337,22 @@ static BEE_Boolean evalCompareString(ExpressionType operator,
 
     cmp = strcmp(left->u.string_value->string, right->u.string_value->string);
 
-    if (operator == EQ_EXPRESSION) {
-        result = (cmp == 0);
-    } else if (operator == NE_EXPRESSION) {
-        result = (cmp != 0);
-    } else if (operator == GT_EXPRESSION) {
-        result = (cmp > 0);
-    } else if (operator == GE_EXPRESSION) {
-        result = (cmp >= 0);
-    } else if (operator == LT_EXPRESSION) {
-        result = (cmp < 0);
-    } else if (operator == LE_EXPRESSION) {
-        result = (cmp <= 0);
+    if (expressType == EQ_EXPRESSION) {
+        result = (BEE_Boolean)(cmp == 0);
+    } else if (expressType == NE_EXPRESSION) {
+        result = (BEE_Boolean)(cmp != 0);
+    } else if (expressType == GT_EXPRESSION) {
+        result = (BEE_Boolean)(cmp > 0);
+    } else if (expressType == GE_EXPRESSION) {
+        result = (BEE_Boolean)(cmp >= 0);
+    } else if (expressType == LT_EXPRESSION) {
+        result = (BEE_Boolean)(cmp < 0);
+    } else if (expressType == LE_EXPRESSION) {
+        result = (BEE_Boolean)(cmp <= 0);
     } else {
-        char *op_str = beeGetOperatorString(operator);
+        char *op_str = beeGetOperatorString(expressType);
         beeRuntimeError(line_number, BAD_OPERATOR_FOR_STRING_ERR,
-                          STRING_MESSAGE_ARGUMENT, "operator", op_str,
+                          STRING_MESSAGE_ARGUMENT, "expressType", op_str,
                           MESSAGE_ARGUMENT_END);
     }
     beeReleaseString(left->u.string_value);
@@ -361,25 +361,25 @@ static BEE_Boolean evalCompareString(ExpressionType operator,
     return result;
 }
 
-static BEE_Boolean evalBinaryNull(BEE_Parser *parser, ExpressionType operator,
+static BEE_Boolean evalBinaryNull(BEE_Parser *parser, ExpressionType expressType,
                  BEE_Value *left, BEE_Value *right, int line_number)
 {
     BEE_Boolean result;
 
-    if (operator == EQ_EXPRESSION)
+    if (expressType == EQ_EXPRESSION)
     {
-        result = left->type == BEE_NULL_VALUE && right->type == BEE_NULL_VALUE;
+        result = (BEE_Boolean)(left->type == BEE_NULL_VALUE && right->type == BEE_NULL_VALUE);
     }
-    else if (operator == NE_EXPRESSION)
+    else if (expressType == NE_EXPRESSION)
     {
-        result =  !(left->type == BEE_NULL_VALUE
+        result =  (BEE_Boolean) !(left->type == BEE_NULL_VALUE
                     && right->type == BEE_NULL_VALUE);
     }
     else
     {
-        char *op_str = beeGetOperatorString(operator);
+        char *op_str = beeGetOperatorString(expressType);
         beeRuntimeError(line_number, NOT_NULL_OPERATOR_ERR,
-                          STRING_MESSAGE_ARGUMENT, "operator", op_str,
+                          STRING_MESSAGE_ARGUMENT, "expressType", op_str,
                           MESSAGE_ARGUMENT_END);
     }
     releaseIfString(left);
@@ -395,7 +395,7 @@ BEE_String * chainString(BEE_Parser *parser, BEE_String *left, BEE_String *right
     BEE_String *ret;
 
     len = strlen(left->string) + strlen(right->string);
-    str = MEM_malloc(len + 1);
+    str = (char *)MEM_malloc(len + 1);
     strcpy(str, left->string);
     strcat(str, right->string);
     ret = beeCreateBeeString(parser, str);
@@ -406,7 +406,7 @@ BEE_String * chainString(BEE_Parser *parser, BEE_String *left, BEE_String *right
 }
 
 BEE_Value beeEvalBinaryExpression(BEE_Parser *parser, LocalEnvironment *env,
-                           ExpressionType operator,
+                           ExpressionType expressionType,
                            Expression *left, Expression *right)
 {
     BEE_Value   left_val;
@@ -418,35 +418,35 @@ BEE_Value beeEvalBinaryExpression(BEE_Parser *parser, LocalEnvironment *env,
 
     if (left_val.type == BEE_LONG_VALUE && right_val.type == BEE_LONG_VALUE)
     {
-        evalBinaryInt(parser, operator, left_val.u.long_value, right_val.u.long_value,
+        evalBinaryInt(parser, expressionType, left_val.u.long_value, right_val.u.long_value,
                         &result, left->line_number);
     }
     else if (left_val.type == BEE_DOUBLE_VALUE && right_val.type == BEE_DOUBLE_VALUE)
     {
-        evalBinaryDouble(parser, operator, left_val.u.double_value, right_val.u.double_value,
+        evalBinaryDouble(parser, expressionType, left_val.u.double_value, right_val.u.double_value,
                            &result, left->line_number);
     }
     else if (left_val.type == BEE_LONG_VALUE && right_val.type == BEE_DOUBLE_VALUE)
     {
         left_val.u.double_value = left_val.u.long_value;
-        evalBinaryDouble(parser, operator, left_val.u.double_value, right_val.u.double_value,
+        evalBinaryDouble(parser, expressionType, left_val.u.double_value, right_val.u.double_value,
                            &result, left->line_number);
     }
     else if (left_val.type == BEE_DOUBLE_VALUE && right_val.type == BEE_LONG_VALUE)
     {
         right_val.u.double_value = right_val.u.long_value;
-        evalBinaryDouble(parser, operator, left_val.u.double_value, right_val.u.double_value,
+        evalBinaryDouble(parser, expressionType, left_val.u.double_value, right_val.u.double_value,
                            &result, left->line_number);
     }
     else if (left_val.type == BEE_BOOLEAN_VALUE && right_val.type == BEE_BOOLEAN_VALUE)
     {
         result.type = BEE_BOOLEAN_VALUE;
-        result.u.boolean_value = evalBinaryBoolean(parser, operator,
+        result.u.boolean_value = evalBinaryBoolean(parser, expressionType,
                                       left_val.u.boolean_value,
                                       right_val.u.boolean_value,
                                       left->line_number);
     }
-    else if (left_val.type == BEE_STRING_VALUE && operator == ADD_EXPRESSION)
+    else if (left_val.type == BEE_STRING_VALUE && expressionType == ADD_EXPRESSION)
     {
         char    buf[LINE_BUF_SIZE];
         BEE_String *right_str;
@@ -495,18 +495,18 @@ BEE_Value beeEvalBinaryExpression(BEE_Parser *parser, LocalEnvironment *env,
     else if (left_val.type == BEE_STRING_VALUE && right_val.type == BEE_STRING_VALUE)
     {
         result.type = BEE_BOOLEAN_VALUE;
-        result.u.boolean_value = evalCompareString(operator, &left_val, &right_val, left->line_number);
+        result.u.boolean_value = evalCompareString(expressionType, &left_val, &right_val, left->line_number);
     }
     else if (left_val.type == BEE_NULL_VALUE || right_val.type == BEE_NULL_VALUE)
     {
         result.type = BEE_BOOLEAN_VALUE;
-        result.u.boolean_value = evalBinaryNull(parser, operator, &left_val, &right_val, left->line_number);
+        result.u.boolean_value = evalBinaryNull(parser, expressionType, &left_val, &right_val, left->line_number);
     }
     else
     {
-        char *op_str = beeGetOperatorString(operator);
+        char *op_str = beeGetOperatorString(expressionType);
         beeRuntimeError(left->line_number, BAD_OPERAND_TYPE_ERR,
-                          STRING_MESSAGE_ARGUMENT, "operator", op_str,
+                          STRING_MESSAGE_ARGUMENT, "expressType", op_str,
                           MESSAGE_ARGUMENT_END);
     }
 
@@ -515,7 +515,7 @@ BEE_Value beeEvalBinaryExpression(BEE_Parser *parser, LocalEnvironment *env,
 
 static BEE_Value eval_logical_and_or_expression(BEE_Parser *parser,
                                LocalEnvironment *env,
-                               ExpressionType operator,
+                               ExpressionType expressType,
                                Expression *left, Expression *right)
 {
     BEE_Value   left_val;
@@ -530,7 +530,7 @@ static BEE_Value eval_logical_and_or_expression(BEE_Parser *parser,
         beeRuntimeError(left->line_number, NOT_BOOLEAN_TYPE_ERR,
                           MESSAGE_ARGUMENT_END);
     }
-    if (operator == LOGICAL_AND_EXPRESSION)
+    if (expressType == LOGICAL_AND_EXPRESSION)
     {
         if (!left_val.u.boolean_value)
         {
@@ -538,7 +538,7 @@ static BEE_Value eval_logical_and_or_expression(BEE_Parser *parser,
             return result;
         }
     }
-    else if (operator == LOGICAL_OR_EXPRESSION)
+    else if (expressType == LOGICAL_OR_EXPRESSION)
     {
         if (left_val.u.boolean_value)
         {
@@ -548,7 +548,7 @@ static BEE_Value eval_logical_and_or_expression(BEE_Parser *parser,
     }
     else
     {
-        DBG_panic(("bad operator..%d\n", operator));
+        DBG_panic(("bad expressType..%d\n", expressType));
     }
 
     right_val = evalExpression(parser, env, right);
@@ -591,7 +591,7 @@ static LocalEnvironment * allocLocalEnvironment()
 {
     LocalEnvironment *ret;
 
-    ret = MEM_malloc(sizeof(LocalEnvironment));
+    ret = (LocalEnvironment *)MEM_malloc(sizeof(LocalEnvironment));
     ret->variable = NULL;
     ret->global_variable = NULL;
 
@@ -636,7 +636,7 @@ static BEE_Value callBuiltinFunction(BEE_Parser *parser, LocalEnvironment *env,
         arg_count++;
     }
 
-    args = MEM_malloc(sizeof(BEE_Value) * arg_count);
+    args = (BEE_Value *)MEM_malloc(sizeof(BEE_Value) * arg_count);
 
     for (arg_p = expr->u.function_call_expression.argument, i = 0;
          arg_p; arg_p = arg_p->next, i++)

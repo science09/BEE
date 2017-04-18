@@ -21,7 +21,7 @@ void beeFunctionDefine(char *identifier, ParameterList *parameter_list, Block *b
     }
     parser = beeGetCurrentParser();
 
-    f = beeMalloc(sizeof(FunctionDefinition));
+    f = (FunctionDefinition *)beeMalloc(sizeof(FunctionDefinition));
     f->name = identifier;
     f->type = BEE_FUNCTION_DEFINITION;
     f->u.crowbar_f.parameter = parameter_list;
@@ -34,7 +34,7 @@ ParameterList * beeCreateParameter(char *identifier)
 {
     ParameterList       *p;
 
-    p = beeMalloc(sizeof(ParameterList));
+    p = (ParameterList *)beeMalloc(sizeof(ParameterList));
     p->name = identifier;
     p->next = NULL;
 
@@ -56,7 +56,7 @@ ArgumentList * beeCreateArgumentList(Expression *expression)
 {
     ArgumentList *al;
 
-    al = beeMalloc(sizeof(ArgumentList));
+    al = (ArgumentList *)beeMalloc(sizeof(ArgumentList));
     al->expression = expression;
     al->next = NULL;
 
@@ -78,7 +78,7 @@ StatementList * beeCreateStatementList(Statement *statement)
 {
     StatementList *sl;
 
-    sl = beeMalloc(sizeof(StatementList));
+    sl = (StatementList *)beeMalloc(sizeof(StatementList));
     sl->statement = statement;
     sl->next = NULL;
 
@@ -103,7 +103,7 @@ Expression * beeAllocExpression(ExpressionType type)
 {
     Expression  *exp;
 
-    exp = beeMalloc(sizeof(Expression));
+    exp = (Expression *)beeMalloc(sizeof(Expression));
     exp->type = type;
     exp->line_number = beeGetCurrentParser()->current_line_number;
 
@@ -145,7 +145,7 @@ static Expression convertValueToExpression(BEE_Value *v)
     return expr;
 }
 
-Expression * beeCreateBinaryExpression(ExpressionType operator, Expression *left, Expression *right)
+Expression * beeCreateBinaryExpression(ExpressionType expressType, Expression *left, Expression *right)
 {
     if ((left->type == INT_EXPRESSION
          || left->type == DOUBLE_EXPRESSION)
@@ -153,7 +153,7 @@ Expression * beeCreateBinaryExpression(ExpressionType operator, Expression *left
             || right->type == DOUBLE_EXPRESSION))
     {
         BEE_Value v;
-        v = beeEvalBinaryExpression(beeGetCurrentParser(), NULL, operator, left, right);
+        v = beeEvalBinaryExpression(beeGetCurrentParser(), NULL, expressType, left, right);
         /* Overwriting left hand expression. */
         *left = convertValueToExpression(&v);
 
@@ -162,7 +162,7 @@ Expression * beeCreateBinaryExpression(ExpressionType operator, Expression *left
     else
     {
         Expression *exp;
-        exp = beeAllocExpression(operator);
+        exp = beeAllocExpression(expressType);
         exp->u.binary_expression.left = left;
         exp->u.binary_expression.right = right;
         return exp;
@@ -233,7 +233,7 @@ static Statement * allocStatement(StatementType type)
 {
     Statement *st;
 
-    st = beeMalloc(sizeof(Statement));
+    st = (Statement *)beeMalloc(sizeof(Statement));
     st->type = type;
     st->line_number = beeGetCurrentParser()->current_line_number;
 
@@ -254,7 +254,7 @@ IdentifierList * beeCreateGlobalIdentifier(char *identifier)
 {
     IdentifierList      *i_list;
 
-    i_list = beeMalloc(sizeof(IdentifierList));
+    i_list = (IdentifierList *)beeMalloc(sizeof(IdentifierList));
     i_list->name = identifier;
     i_list->next = NULL;
 
@@ -302,7 +302,7 @@ Elsif * beeCreateElseIf(Expression *expr, Block *block)
 {
     Elsif *ei;
 
-    ei = beeMalloc(sizeof(Elsif));
+    ei = (Elsif *)beeMalloc(sizeof(Elsif));
     ei->condition = expr;
     ei->block = block;
     ei->next = NULL;
@@ -338,7 +338,7 @@ Block * beeCreateBlock(StatementList *statement_list)
 {
     Block *block;
 
-    block = beeMalloc(sizeof(Block));
+    block = (Block *)beeMalloc(sizeof(Block));
     block->statement_list = statement_list;
 
     return block;

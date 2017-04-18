@@ -70,7 +70,7 @@ static void addString(VString *v, char *str)
     }
     old_len = myStrLen(v->string);
     new_size = old_len + strlen(str);
-    v->string = MEM_realloc(v->string, new_size);
+    v->string = (char *)MEM_realloc(v->string, new_size);
     strcpy(&v->string[old_len], str);
 }
 
@@ -79,7 +79,7 @@ static void addCharacter(VString *v, char ch)
     size_t current_len;
 
     current_len = myStrLen(v->string);
-    v->string = MEM_realloc(v->string, current_len+2);
+    v->string = (char *)MEM_realloc(v->string, current_len+2);
     v->string[current_len] = ch;
     v->string[current_len+1] = '\0';
 }

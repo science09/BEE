@@ -1,5 +1,5 @@
 TARGET = bee
-CC=gcc
+CC=g++
 OBJS = \
   lex.yy.o\
   y.tab.o\
@@ -15,7 +15,7 @@ OBJS = \
   error_message.o\
   ./memory/mem.o\
   ./debug/dbg.o
-CFLAGS = -c -g -Wall -Wswitch-enum -ansi -pedantic -DDEBUG -std=c99
+CFLAGS = -c -g -Wall -Wswitch-enum -ansi -pedantic -DDEBUG -std=c++11
 INCLUDES = \
 
 $(TARGET):$(OBJS)
@@ -31,11 +31,14 @@ y.tab.c : bee.y
 lex.yy.c : bee.l bee.y y.tab.h
 	flex bee.l
 y.tab.o: y.tab.c bee_def.h MEM.h
-	$(CC) -c -g $*.c $(INCLUDES)
+	gcc -c -g $*.c $(INCLUDES)
 lex.yy.o: lex.yy.c bee_def.h MEM.h
-	$(CC) -c -g $*.c $(INCLUDES)
+	gcc -c -g $*.c $(INCLUDES)
 .c.o:
 	$(CC) $(CFLAGS) $*.c $(INCLUDES)
+.cpp.o:
+	$(CC) $(CFLAGS) -std=c++11 $*.cpp $(INCLUDES)
+
 ./memory/mem.o:
 	cd ./memory; $(MAKE);
 ./debug/dbg.o:
@@ -47,7 +50,7 @@ error_message.o: error_message.c bee_def.h MEM.h BEE.h BEE_dev.h
 eval.o: eval.c MEM.h DBG.h bee_def.h BEE.h BEE_dev.h
 execute.o: execute.c MEM.h DBG.h bee_def.h BEE.h BEE_dev.h
 interface.o: interface.c MEM.h DBG.h bee_def.h BEE.h BEE_dev.h
-main.o: main.c BEE.h MEM.h
+main.o: main.cpp BEE.h MEM.h
 builtin.o: builtin.c MEM.h DBG.h bee_def.h BEE.h BEE_dev.h
 string.o: string.c MEM.h bee_def.h BEE.h BEE_dev.h
 string_pool.o: string_pool.c MEM.h DBG.h bee_def.h BEE.h BEE_dev.h

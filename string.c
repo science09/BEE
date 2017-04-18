@@ -24,7 +24,7 @@ void beeAddStringLiteral(int letter)
     if (st_string_literal_buffer_size == st_string_literal_buffer_alloc_size) {
         st_string_literal_buffer_alloc_size += STRING_ALLOC_SIZE;
         st_string_literal_buffer
-                = MEM_realloc(st_string_literal_buffer,
+                = (char *)MEM_realloc(st_string_literal_buffer,
                               st_string_literal_buffer_alloc_size);
     }
     st_string_literal_buffer[st_string_literal_buffer_size] = letter;
@@ -43,7 +43,7 @@ char * beeCloseStringLiteral(void)
 {
     char *new_str;
 
-    new_str = beeMalloc(st_string_literal_buffer_size + 1);
+    new_str = (char *)beeMalloc(st_string_literal_buffer_size + 1);
     memcpy(new_str, st_string_literal_buffer, st_string_literal_buffer_size);
     new_str[st_string_literal_buffer_size] = '\0';
 
@@ -54,7 +54,7 @@ char * beeCreateIdentifier(char *str)
 {
     char *new_str;
 
-    new_str = beeMalloc(strlen(str) + 1);
+    new_str = (char *)beeMalloc(strlen(str) + 1);
     strcpy(new_str, str);
 
     return new_str;

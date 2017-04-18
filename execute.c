@@ -62,7 +62,7 @@ static StatementResult executeGlobalStatement(BEE_Parser *parser, LocalEnvironme
                               STRING_MESSAGE_ARGUMENT, "name", pos->name,
                               MESSAGE_ARGUMENT_END);
         }
-        new_ref = MEM_malloc(sizeof(GlobalVariableRef));
+        new_ref = (GlobalVariableRef *)MEM_malloc(sizeof(GlobalVariableRef));
         new_ref->variable = variable;
         new_ref->next = env->global_variable;
         env->global_variable = new_ref;

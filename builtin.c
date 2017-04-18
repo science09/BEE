@@ -100,7 +100,7 @@ BEE_Value beeBuiltinFopenFunc(BEE_Parser *parser, int arg_count, BEE_Value *args
 
 static BEE_Boolean check_native_pointer(BEE_Value *value)
 {
-    return value->u.native_pointer.info == &st_native_lib_info;
+    return (BEE_Boolean)(value->u.native_pointer.info == &st_native_lib_info);
 }
 
 BEE_Value beeBuiltinFcloseFunc(BEE_Parser *parser, int arg_count, BEE_Value *args)
@@ -122,7 +122,7 @@ BEE_Value beeBuiltinFcloseFunc(BEE_Parser *parser, int arg_count, BEE_Value *arg
     {
         beeRuntimeError(0, FCLOSE_ARGUMENT_TYPE_ERR, MESSAGE_ARGUMENT_END);
     }
-    fp = args[0].u.native_pointer.pointer;
+    fp = (FILE *)args[0].u.native_pointer.pointer;
     fclose(fp);
 
     return value;
@@ -149,13 +149,13 @@ BEE_Value beeBuiltinFgetsFunc(BEE_Parser *parser, int arg_count, BEE_Value *args
     {
         beeRuntimeError(0, FGETS_ARGUMENT_TYPE_ERR, MESSAGE_ARGUMENT_END);
     }
-    fp = args[0].u.native_pointer.pointer;
+    fp = (FILE *)args[0].u.native_pointer.pointer;
 
     while (fgets(buf, LINE_BUF_SIZE, fp))
     {
         int new_len;
         new_len = ret_len + strlen(buf);
-        ret_buf = MEM_realloc(ret_buf, new_len + 1);
+        ret_buf = (char *)MEM_realloc(ret_buf, new_len + 1);
         if (ret_len == 0)
         {
             strcpy(ret_buf, buf);
@@ -201,7 +201,7 @@ BEE_Value beeBuiltinFputsFunc(BEE_Parser *parser, int arg_count, BEE_Value *args
     {
         beeRuntimeError(0, FPUTS_ARGUMENT_TYPE_ERR, MESSAGE_ARGUMENT_END);
     }
-    fp = args[1].u.native_pointer.pointer;
+    fp = (FILE *)args[1].u.native_pointer.pointer;
 
     fputs(args[0].u.string_value->string, fp);
 
