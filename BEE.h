@@ -11,6 +11,7 @@ typedef struct BEE_Parser_tag BEE_Parser;
 
 BEE_Parser *BEE_CreateParser(void);
 void BEE_Compile(BEE_Parser *parser, FILE *fp);
+void BEE_CompileStr(BEE_Parser *parser, char *expression);
 void BEE_Parse(BEE_Parser *parser);
 void BEE_DestroyParser(BEE_Parser *parser);
 

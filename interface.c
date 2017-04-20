@@ -32,6 +32,9 @@ BEE_Parser * BEE_CreateParser(void)
     parser->function_list = NULL;
     parser->statement_list = NULL;
     parser->current_line_number = 1;
+    parser->st_string_literal_buffer = NULL;
+    parser->st_string_literal_buffer_size = 0;
+    parser->st_string_literal_buffer_alloc_size = 0;
 
     beeSetCurrentParser(parser);
     addBuiltinFunctions(parser);
@@ -56,6 +59,22 @@ void BEE_Compile(BEE_Parser *parser, FILE *fp)
     beeResetStringLiteralBuffer();
     yylex_destroy(scanner);
 }
+
+void BEE_CompileStr(BEE_Parser *parser, char * expression)
+{
+    yyscan_t scanner;
+    beeSetCurrentParser(parser);
+    yylex_init(&scanner);
+    yy_scan_string(expression, scanner);
+    if (yyparse(scanner))
+    {
+        fprintf(stderr, "Parse Expression %s Error!\n", expression);
+        exit(1);
+    }
+    beeResetStringLiteralBuffer();
+    yylex_destroy(scanner);
+}
+
 
 void BEE_Parse(BEE_Parser *parser)
 {
