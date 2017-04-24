@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include "MEM.h"
 #include "DBG.h"
 #include "BEE_dev.h"
@@ -43,7 +44,7 @@ BEE_Value beeBuiltinPrintFunc(BEE_Parser *parser, int arg_count, BEE_Value *args
             }
             break;
         case BEE_LONG_VALUE:
-            printf("%d", args[0].u.long_value);
+            printf("%ld", args[0].u.long_value);
             break;
         case BEE_DOUBLE_VALUE:
             printf("%f", args[0].u.double_value);
@@ -134,7 +135,7 @@ BEE_Value beeBuiltinFgetsFunc(BEE_Parser *parser, int arg_count, BEE_Value *args
     FILE *fp;
     char buf[LINE_BUF_SIZE];
     char *ret_buf = NULL;
-    int ret_len = 0;
+    size_t ret_len = 0;
 
     if (arg_count < 1)
     {
@@ -153,7 +154,7 @@ BEE_Value beeBuiltinFgetsFunc(BEE_Parser *parser, int arg_count, BEE_Value *args
 
     while (fgets(buf, LINE_BUF_SIZE, fp))
     {
-        int new_len;
+        size_t new_len;
         new_len = ret_len + strlen(buf);
         ret_buf = (char *)MEM_realloc(ret_buf, new_len + 1);
         if (ret_len == 0)
@@ -206,6 +207,13 @@ BEE_Value beeBuiltinFputsFunc(BEE_Parser *parser, int arg_count, BEE_Value *args
     fputs(args[0].u.string_value->string, fp);
 
     return value;
+}
+
+BEE_Value beeBuiltinTestFunc(BEE_Parser *parser, int arg_count, BEE_Value *args)
+{
+    printf("arg_count: %d\n", arg_count);
+    sleep(3);
+    printf("args[0]: %ld\n", args[0].u.long_value);
 }
 
 void beeAddStdFp(BEE_Parser *parser)

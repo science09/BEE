@@ -365,6 +365,7 @@ BEE_Value beeBuiltinFopenFunc(BEE_Parser *parser, int arg_count, BEE_Value *args
 BEE_Value beeBuiltinFcloseFunc(BEE_Parser *parser, int arg_count, BEE_Value *args);
 BEE_Value beeBuiltinFgetsFunc(BEE_Parser *parser, int arg_count, BEE_Value *args);
 BEE_Value beeBuiltinFputsFunc(BEE_Parser *parser, int arg_count, BEE_Value *args);
+BEE_Value beeBuiltinTestFunc(BEE_Parser *parser, int arg_count, BEE_Value *args);
 void beeAddStdFp(BEE_Parser *inter);
 
 #endif //BEE_BEE_DEF_H

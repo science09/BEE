@@ -17,6 +17,7 @@ static void addBuiltinFunctions(BEE_Parser *parser)
     BEE_AddBuiltinFunction(parser, "fclose", beeBuiltinFcloseFunc);
     BEE_AddBuiltinFunction(parser, "fgets", beeBuiltinFgetsFunc);
     BEE_AddBuiltinFunction(parser, "fputs", beeBuiltinFputsFunc);
+    BEE_AddBuiltinFunction(parser, "test", beeBuiltinTestFunc);
 }
 
 BEE_Parser * BEE_CreateParser(void)

@@ -34,7 +34,8 @@ void test_string_routine()
 {
     BEE_Parser *parser;
     char * expression = "print(\"hoge\\tpiyo\\n\\\\n\");\n"
-            "print(\"abc\\n\"); # comment";
+            "print(\"abc\\n\"); # comment\n"
+            "test(5);";
     g_mtx.lock();
     parser = BEE_CreateParser();
     BEE_CompileStr(parser, expression);

@@ -51,7 +51,8 @@ static void clearVString(VString *v)
     v->string = NULL;
 }
 
-size_t myStrLen(char *str) {
+size_t myStrLen(char *str)
+{
     if (str == NULL)
     {
         return 0;
