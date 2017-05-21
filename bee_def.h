@@ -76,6 +76,11 @@ typedef enum {
     GE_EXPRESSION,
     LT_EXPRESSION,
     LE_EXPRESSION,
+    LSHIFT_EXPRESSION,
+    RSHIFT_EXPRESSION,
+    BIT_AND_EXPRESSION,
+    BIT_XOR_EXPRESSION,
+    BIT_OR_EXPRESSION,
     LOGICAL_AND_EXPRESSION,
     LOGICAL_OR_EXPRESSION,
     MINUS_EXPRESSION,
@@ -87,7 +92,9 @@ typedef enum {
 #define dkc_is_math_operator(operator) \
   ((operator) == ADD_EXPRESSION || (operator) == SUB_EXPRESSION\
    || (operator) == MUL_EXPRESSION || (operator) == DIV_EXPRESSION\
-   || (operator) == MOD_EXPRESSION)
+   || (operator) == MOD_EXPRESSION || (operator) == LSHIFT_EXPRESSION\
+   || (operator) == RSHIFT_EXPRESSION || (operator) == BIT_AND_EXPRESSION\
+   || (operator) == BIT_XOR_EXPRESSION || (operator) == BIT_OR_EXPRESSION)
 
 #define dkc_is_compare_operator(operator) \
   ((operator) == EQ_EXPRESSION || (operator) == NE_EXPRESSION\

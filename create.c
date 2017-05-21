@@ -12,6 +12,7 @@ void beeFunctionDefine(char *identifier, ParameterList *parameter_list, Block *b
     FunctionDefinition *f;
     BEE_Parser *parser;
 
+    printf("bee Function define!\n");
     if (beeSearchFunction(identifier))
     {
         beeCompileError(FUNCTION_MULTIPLE_DEFINE_ERR,

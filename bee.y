@@ -45,13 +45,15 @@ typedef struct IdentifierList;
 %token <identifier>     IDENTIFIER
 %token FUNCTION IF ELSE ELSIF WHILE FOR RETURN_T BREAK CONTINUE NULL_T
         LP RP LC RC SEMICOLON COMMA ASSIGN LOGICAL_AND LOGICAL_OR
-        EQ NE GT GE LT LE ADD SUB MUL DIV MOD TRUE_T FALSE_T GLOBAL_T
+        EQ NE GT GE LT LE ADD SUB MUL DIV MOD LSHIFT RSHIFT
+        BIT_AND BIT_OR BIT_XOR TRUE_T FALSE_T GLOBAL_T
 %type   <parameter_list> parameter_list
 %type   <argument_list> argument_list
 %type   <expression> expression expression_opt
         logical_and_expression logical_or_expression
-        equality_expression relational_expression
-        additive_expression multiplicative_expression
+        bit_or_expression bit_xor_expression
+        bit_and_expression equality_expression relational_expression
+        additive_expression shift_expression multiplicative_expression
         unary_expression primary_expression
 %type   <statement> statement global_statement
         if_statement while_statement for_statement
@@ -69,10 +71,8 @@ definition_or_statement
         : function_definition
         | statement
         {
-            BEE_Parser *inter = beeGetCurrentParser();
-
-            inter->statement_list
-                = beeChainStatementList(inter->statement_list, $1);
+            BEE_Parser *parser = beeGetCurrentParser();
+            parser->statement_list = beeChainStatementList(parser->statement_list, $1);
         }
         ;
 function_definition
@@ -130,10 +130,31 @@ logical_or_expression
         }
         ;
 logical_and_expression
-        : equality_expression
-        | logical_and_expression LOGICAL_AND equality_expression
+        : bit_or_expression
+        | logical_and_expression LOGICAL_AND bit_or_expression
         {
             $$ = beeCreateBinaryExpression(LOGICAL_AND_EXPRESSION, $1, $3);
+        }
+        ;
+bit_or_expression
+        : bit_xor_expression
+        | bit_or_expression BIT_OR bit_xor_expression
+        {
+            $$ = beeCreateBinaryExpression(BIT_OR_EXPRESSION, $1, $3);
+        }
+        ;
+bit_xor_expression
+        : bit_and_expression
+        | bit_xor_expression BIT_XOR bit_and_expression
+        {
+            $$ = beeCreateBinaryExpression(BIT_XOR_EXPRESSION, $1, $3);
+        }
+        ;
+bit_and_expression
+        : equality_expression
+        | bit_and_expression BIT_AND equality_expression
+        {
+            $$ = beeCreateBinaryExpression(BIT_AND_EXPRESSION, $1, $3);
         }
         ;
 equality_expression
@@ -148,22 +169,33 @@ equality_expression
         }
         ;
 relational_expression
-        : additive_expression
-        | relational_expression GT additive_expression
+        : shift_expression
+        | relational_expression GT shift_expression
         {
             $$ = beeCreateBinaryExpression(GT_EXPRESSION, $1, $3);
         }
-        | relational_expression GE additive_expression
+        | relational_expression GE shift_expression
         {
             $$ = beeCreateBinaryExpression(GE_EXPRESSION, $1, $3);
         }
-        | relational_expression LT additive_expression
+        | relational_expression LT shift_expression
         {
             $$ = beeCreateBinaryExpression(LT_EXPRESSION, $1, $3);
         }
-        | relational_expression LE additive_expression
+        | relational_expression LE shift_expression
         {
             $$ = beeCreateBinaryExpression(LE_EXPRESSION, $1, $3);
+        }
+        ;
+shift_expression
+        : additive_expression
+        | shift_expression LSHIFT additive_expression
+        {
+            $$ = beeCreateBinaryExpression(LSHIFT_EXPRESSION, $1, $3);
+        }
+        | shift_expression RSHIFT additive_expression
+        {
+            $$ = beeCreateBinaryExpression(RSHIFT_EXPRESSION, $1, $3);
         }
         ;
 additive_expression
@@ -203,6 +235,10 @@ primary_expression
         : IDENTIFIER LP argument_list RP
         {
             $$ = beeCreateFunctionCallExpression($1, $3);
+        }
+        | IDENTIFIER argument_list
+        {
+            $$ = beeCreateFunctionCallExpression($1, $2);
         }
         | IDENTIFIER LP RP
         {

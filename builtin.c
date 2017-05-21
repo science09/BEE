@@ -10,7 +10,7 @@
 #include "BEE_dev.h"
 #include "bee_def.h"
 
-#define NATIVE_LIB_NAME "crowbar.lang.file"
+#define NATIVE_LIB_NAME "bee.lang.file"
 
 
 static BEE_NativePointerInfo st_native_lib_info = {
@@ -211,9 +211,12 @@ BEE_Value beeBuiltinFputsFunc(BEE_Parser *parser, int arg_count, BEE_Value *args
 
 BEE_Value beeBuiltinTestFunc(BEE_Parser *parser, int arg_count, BEE_Value *args)
 {
-    printf("arg_count: %d\n", arg_count);
-    sleep(3);
-    printf("args[0]: %ld\n", args[0].u.long_value);
+//    sleep(3);
+    printf("args_len: %d, args[0]: %ld\n", arg_count, args[0].u.long_value);
+    if (arg_count > 0 && args[0].type == BEE_LONG_VALUE)
+    {
+        sleep((u_int )args[0].u.long_value);
+    }
 }
 
 void beeAddStdFp(BEE_Parser *parser)

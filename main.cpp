@@ -5,11 +5,11 @@
 #include "MEM.h"
 #include <thread>
 #include <mutex>
-
+#include <string.h>
 
 std::mutex g_mtx;
 
-#define LEN  10
+#define LEN  1
 
 void test_routine()
 {
@@ -35,43 +35,58 @@ void test_string_routine()
     BEE_Parser *parser;
     char * expression = "print(\"hoge\\tpiyo\\n\\\\n\");\n"
             "print(\"abc\\n\"); # comment\n"
-            "test(5);";
+            "addOne(5, 6.1, \"msg\");";
     g_mtx.lock();
     parser = BEE_CreateParser();
-    BEE_CompileStr(parser, expression);
+    BEE_CompileStr(parser, "0x2<<3;");
     g_mtx.unlock();
     BEE_Parse(parser);
     BEE_DestroyParser(parser);
+}
+
+extern "C" int addOne(int a)
+{
+    return a+1;
 }
 
 
 int main(int argc, char **argv)
 {
     BEE_Parser     *parser;
-    FILE *fp;
     pthread_t  tid[LEN];
     int ret;
-/*
-    if (argc != 2) {
-        fprintf(stderr, "usage:%s filename", argv[0]);
-        exit(1);
+    char buff[1024] = {0};
+
+    parser = BEE_CreateParser();
+    fputs("bee->", stdout);
+    while (nullptr != fgets(buff, 1024, stdin)) {
+        if (0 == strcmp("exit\n", buff)) {
+            break;
+        }
+        else if (0 == strcmp("\n", buff)) {
+            fputs("bee->", stdout);
+            continue;
+        }
+
+        size_t len = strlen(buff);
+        buff[len-1] = '\n';
+        BEE_CompileStr(parser, buff);
+        BEE_Parse(parser);
+        fputs("bee->", stdout);
     }
-*/
 
+    BEE_DestroyParser(parser);
 
-
-    std::thread th[LEN];
-
-    for (int i = 0; i < LEN; ++i) {
-        th[i] = std::thread(test_string_routine);
-    }
-
-    for (int i = 0; i < LEN; ++i) {
-        th[i].join();
-    }
-
-
-
+//    std::thread th[LEN];
+//
+//    for (int i = 0; i < LEN; ++i) {
+//        th[i] = std::thread(test_string_routine);
+//    }
+//
+//    for (int i = 0; i < LEN; ++i) {
+//        th[i].join();
+//    }
+//
 
 
 //    fp = fopen("test/test.bee", "r");

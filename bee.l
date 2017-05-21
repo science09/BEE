@@ -52,6 +52,11 @@ static void increment_line_number(void)
 <INITIAL>"*"            return MUL;
 <INITIAL>"/"            return DIV;
 <INITIAL>"%"            return MOD;
+<INITIAL>"<<"           return LSHIFT;
+<INITIAL>">>"           return RSHIFT;
+<INITIAL>"&"            return BIT_AND;
+<INITIAL>"|"            return BIT_OR;
+<INITIAL>"^"            return BIT_XOR;
 <INITIAL>[A-Za-z_][A-Za-z_0-9]* {
     yylval->identifier = beeCreateIdentifier(yytext);
     return IDENTIFIER;
@@ -59,6 +64,18 @@ static void increment_line_number(void)
 <INITIAL>([1-9][0-9]*)|"0" {
     Expression  *expression = beeAllocExpression(INT_EXPRESSION);
     sscanf(yytext, "%ld", &expression->u.long_value);
+    yylval->expression = expression;
+    return INT_LITERAL;
+}
+<INITIAL>0(x|X)[0-9a-fA-F]+ {
+    Expression  *expression = beeAllocExpression(INT_EXPRESSION);
+    sscanf(yytext, "%lx", &expression->u.long_value);
+    yylval->expression = expression;
+    return INT_LITERAL;
+}
+<INITIAL>0[0-7]+ {
+    Expression  *expression = beeAllocExpression(INT_EXPRESSION);
+    sscanf(yytext, "%lo", &expression->u.long_value);
     yylval->expression = expression;
     return INT_LITERAL;
 }
@@ -73,7 +90,7 @@ static void increment_line_number(void)
     BEGIN STRING_LITERAL_STATE;
 }
 <INITIAL>[ \t] ;
-<INITIAL>\n {increment_line_number();}
+<INITIAL>\n {increment_line_number(); return SEMICOLON;}
 <INITIAL>#     BEGIN COMMENT;
 <INITIAL>.      {
     char buf[LINE_BUF_SIZE];

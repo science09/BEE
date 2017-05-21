@@ -69,8 +69,7 @@ void BEE_CompileStr(BEE_Parser *parser, char * expression)
     yy_scan_string(expression, scanner);
     if (yyparse(scanner))
     {
-        fprintf(stderr, "Parse Expression %s Error!\n", expression);
-        exit(1);
+        fprintf(stderr, "Expression Syntax %s Error!\n", expression);
     }
     beeResetStringLiteralBuffer();
     yylex_destroy(scanner);
@@ -82,6 +81,7 @@ void BEE_Parse(BEE_Parser *parser)
     parser->execute_storage = MEM_open_storage(0);
     beeAddStdFp(parser);
     beeExecuteStatementList(parser, NULL, parser->statement_list);
+    releaseStatementList(parser);
 }
 
 static void releaseGlobalStrings(BEE_Parser *parser)
@@ -95,6 +95,11 @@ static void releaseGlobalStrings(BEE_Parser *parser)
             beeReleaseString(temp->value.u.string_value);
         }
     }
+}
+
+void releaseStatementList(BEE_Parser *parser)
+{
+    parser->statement_list = NULL;
 }
 
 void BEE_DestroyParser(BEE_Parser *parser)

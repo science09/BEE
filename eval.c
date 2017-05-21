@@ -195,6 +195,10 @@ static void evalBinaryInt(BEE_Parser *parser, ExpressionType expressType,
     {
         result->type = BEE_BOOLEAN_VALUE;
     }
+    else if (dkc_is_logical_operator(expressType))
+    {
+        result->type = BEE_BOOLEAN_VALUE;
+    }
     else
     {
         DBG_panic(("expressType..%d\n", expressType));
@@ -225,9 +229,26 @@ static void evalBinaryInt(BEE_Parser *parser, ExpressionType expressType,
         case MOD_EXPRESSION:
             result->u.long_value = left % right;
             break;
-        case LOGICAL_AND_EXPRESSION:        /* FALLTHRU */
+        case LSHIFT_EXPRESSION:
+            result->u.long_value = left << right;
+            break;
+        case RSHIFT_EXPRESSION:
+            result->u.long_value = left >> right;
+            break;
+        case BIT_AND_EXPRESSION:
+            result->u.long_value = left & right;
+            break;
+        case BIT_XOR_EXPRESSION:
+            result->u.long_value = left ^ right;
+            break;
+        case BIT_OR_EXPRESSION:
+            result->u.long_value = left | right;
+            break;
+        case LOGICAL_AND_EXPRESSION:
+            result->u.boolean_value = (BEE_Boolean)(left && right);
+            break;
         case LOGICAL_OR_EXPRESSION:
-            DBG_panic(("bad case...%d", expressType));
+            result->u.boolean_value = (BEE_Boolean)(left || right);
             break;
         case EQ_EXPRESSION:
             result->u.boolean_value = (BEE_Boolean)(left == right);
@@ -672,16 +693,14 @@ static BEE_Value callBeeFunction(BEE_Parser *parser, LocalEnvironment *env, Expr
 
         if (param_p == NULL)
         {
-            beeRuntimeError(expr->line_number, ARGUMENT_TOO_MANY_ERR,
-                              MESSAGE_ARGUMENT_END);
+            beeRuntimeError(expr->line_number, ARGUMENT_TOO_MANY_ERR, MESSAGE_ARGUMENT_END);
         }
         arg_val = evalExpression(parser, env, arg_p->expression);
         beeAddLocalVariable(local_env, param_p->name, &arg_val);
     }
     if (param_p)
     {
-        beeRuntimeError(expr->line_number, ARGUMENT_TOO_FEW_ERR,
-                          MESSAGE_ARGUMENT_END);
+        beeRuntimeError(expr->line_number, ARGUMENT_TOO_FEW_ERR, MESSAGE_ARGUMENT_END);
     }
     result = beeExecuteStatementList(parser, local_env, func->u.crowbar_f.block->statement_list);
     if (result.type == RETURN_STATEMENT_RESULT)
@@ -704,23 +723,66 @@ static BEE_Value evalFunctionCallExpression(BEE_Parser *parser, LocalEnvironment
 
     char *identifier = expr->u.function_call_expression.identifier;
 
+
     func = beeSearchFunction(identifier);
     if (func == NULL)
     {
-        beeRuntimeError(expr->line_number, FUNCTION_NOT_FOUND_ERR,
-                          STRING_MESSAGE_ARGUMENT, "name", identifier,
-                          MESSAGE_ARGUMENT_END);
+        printf("function %s not found!\n", identifier);
+        //如果能找到符号表，则可以执行
+        func = (FunctionDefinition *)beeMalloc(sizeof(FunctionDefinition));
+        func->name = identifier;
+
+        ArgumentList * argList = expr->u.function_call_expression.argument;
+        while (argList != NULL)
+        {
+            switch(argList->expression->type)
+            {
+                case INT_EXPRESSION:
+                    printf("value: %ld\n", argList->expression->u.long_value);
+                    break;
+                case BOOLEAN_EXPRESSION:
+                    printf("bool value: \n");
+                    break;
+                case DOUBLE_EXPRESSION:
+                    printf("value: %f\n", argList->expression->u.double_value);
+                    break;
+                case STRING_EXPRESSION:
+                    printf("value: %s\n", argList->expression->u.string_value);
+                    break;
+                default:
+                    printf("un implemetion call \n");
+            }
+
+            argList = argList->next;
+        }
+
+        func->type = BEE_FUNCTION_DEFINITION;
+//        func->u.crowbar_f.parameter ;
+//        func->u.crowbar_f.block = block;
+        func->next = parser->function_list;
+        parser->function_list = func;
+        value = callBeeFunction(parser, env, expr, func);
+        printf("function called!\n");
+        exit(1);
+//        beeRuntimeError(expr->line_number, FUNCTION_NOT_FOUND_ERR,
+//                          STRING_MESSAGE_ARGUMENT, "name", identifier,
+//                          MESSAGE_ARGUMENT_END);
     }
-    switch (func->type)
+    else
     {
-        case BEE_FUNCTION_DEFINITION:
-            value = callBeeFunction(parser, env, expr, func);
-            break;
-        case BUILTIN_FUNCTION_DEFINITION:
-            value = callBuiltinFunction(parser, env, expr, func->u.native_f.proc);
-            break;
-        default:
-            DBG_panic(("bad case..%d\n", func->type));
+        switch (func->type)
+        {
+            case BEE_FUNCTION_DEFINITION:
+                printf("BEE_FUNCTION_DEFINITION\n");
+                value = callBeeFunction(parser, env, expr, func);
+                break;
+            case BUILTIN_FUNCTION_DEFINITION:
+                printf("BUILTIN_FUNCTION_DEFINITION\n");
+                value = callBuiltinFunction(parser, env, expr, func->u.native_f.proc);
+                break;
+            default:
+                DBG_panic(("bad case..%d\n", func->type));
+        }
     }
 
     return value;

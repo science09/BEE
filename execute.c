@@ -7,6 +7,7 @@
 #include "MEM.h"
 #include "DBG.h"
 #include "bee_def.h"
+#include "BEE_dev.h"
 
 
 static StatementResult executeStatement(BEE_Parser *parser, LocalEnvironment *env, Statement *statement);
@@ -25,6 +26,7 @@ static StatementResult executeExpressionStatement(BEE_Parser *parser,
     {
         beeReleaseString(v.u.string_value);
     }
+    result.u.return_value = v;
 
     return result;
 }
@@ -264,6 +266,7 @@ static StatementResult executeContinueStatement(BEE_Parser *parser, LocalEnviron
 static StatementResult executeStatement(BEE_Parser *parser, LocalEnvironment *env, Statement *statement)
 {
     StatementResult result;
+    BEE_Value rtnValue;
 
     result.type = NORMAL_STATEMENT_RESULT;
 
@@ -296,6 +299,29 @@ static StatementResult executeStatement(BEE_Parser *parser, LocalEnvironment *en
         case STATEMENT_TYPE_COUNT_PLUS_1:   /* FALLTHRU */
         default:
             DBG_panic(("bad case...%d", statement->type));
+    }
+
+    if (result.type == NORMAL_STATEMENT_RESULT)
+    {
+        rtnValue = result.u.return_value;
+        switch(rtnValue.type)
+        {
+            case BEE_BOOLEAN_VALUE:
+                printf("value = %s\n", (rtnValue.u.boolean_value == 1) ? "true" : "false");
+                break;
+            case BEE_LONG_VALUE:
+                printf("value = %ld = 0x%lx\n", rtnValue.u.long_value, rtnValue.u.long_value);
+                break;
+            case BEE_DOUBLE_VALUE:
+                printf("value = %lf\n", rtnValue.u.double_value);
+                break;
+            case BEE_STRING_VALUE:
+                printf("value = %s\n", rtnValue.u.string_value->string);
+                break;
+            default:
+                printf("unimplemented type(%d)!\n", rtnValue.type);
+                break;
+        }
     }
 
     return result;

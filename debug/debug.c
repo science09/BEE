@@ -70,7 +70,7 @@ void DBG_assert_func(char *fmt, ...)
                 st_current_file_name, st_current_line,
                 st_assert_expression, fmt, ap);
     va_end(ap);
-    abort();
+//    abort();
 }
 
 static void panic_func(FILE *fp, char *file, int line, char *fmt,  va_list ap)
@@ -91,7 +91,7 @@ void DBG_panic_func(char *fmt, ...)
                st_current_file_name, st_current_line, fmt, ap);
     panic_func(stderr, st_current_file_name, st_current_line, fmt, ap);
     va_end(ap);
-    abort();
+//    abort();
 }
 
 void DBG_debug_write_func(int level, char *fmt, ...)

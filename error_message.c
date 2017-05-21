@@ -250,8 +250,6 @@ void beeCompileError(CompileError id, ...)
     formatMessage(&beeCompileErrorMessageFormat[id], &message, ap);
     fprintf(stderr, "%3d:%s\n", line_number, message.string);
     va_end(ap);
-
-    exit(1);
 }
 
 void beeRuntimeError(int line_number, RuntimeError id, ...)
@@ -259,28 +257,31 @@ void beeRuntimeError(int line_number, RuntimeError id, ...)
     va_list     ap;
     VString     message;
 
+    printf("======1====\n");
     selfCheck();
+    printf("======2====\n");
     va_start(ap, id);
+    printf("======3====\n");
     clearVString(&message);
+    printf("======4=id: %d, ===\n",id);
     formatMessage(&beeRuntimeErrorMessageFormat[id], &message, ap);
+    printf("======5====\n");
     fprintf(stderr, "%3d:%s\n", line_number, message.string);
     va_end(ap);
-
-    exit(1);
 }
 
-
-int yyerror(char const *str)
-{
-    char *near_token;
-    near_token = "EOF";
+//
+//int yyerror(char const *str)
+//{
+//    char *near_token;
+//    near_token = "EOF";
 //
 //    if (yytext[0] == '\0') {
 //        near_token = "EOF";
 //    } else {
 //        near_token = yytext;
 //    }
-    beeCompileError(PARSE_ERR, STRING_MESSAGE_ARGUMENT, "token", near_token, MESSAGE_ARGUMENT_END);
-
-    return 0;
-}
+//    beeCompileError(PARSE_ERR, STRING_MESSAGE_ARGUMENT, "token", near_token, MESSAGE_ARGUMENT_END);
+//
+//    return 0;
+//}

@@ -14,5 +14,6 @@ void BEE_Compile(BEE_Parser *parser, FILE *fp);
 void BEE_CompileStr(BEE_Parser *parser, char *expression);
 void BEE_Parse(BEE_Parser *parser);
 void BEE_DestroyParser(BEE_Parser *parser);
+void releaseStatementList(BEE_Parser *parser);
 
 #endif //BEE_BEE_H
