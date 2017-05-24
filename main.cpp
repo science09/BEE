@@ -10,6 +10,7 @@
 std::mutex g_mtx;
 
 #define LEN  1
+#define INTERFACE 0
 
 void test_routine()
 {
@@ -57,6 +58,7 @@ int main(int argc, char **argv)
     int ret;
     char buff[1024] = {0};
 
+#if INTERFACE
     parser = BEE_CreateParser();
     fputs("bee->", stdout);
     while (nullptr != fgets(buff, 1024, stdin)) {
@@ -76,6 +78,7 @@ int main(int argc, char **argv)
     }
 
     BEE_DestroyParser(parser);
+#else
 
 //    std::thread th[LEN];
 //
@@ -88,18 +91,21 @@ int main(int argc, char **argv)
 //    }
 //
 
+    FILE *fp;
+    char msgBuf[1024] = {0};
+    fp = fopen("test/t.bee", "r");
+    if (fp == NULL) {
+        fprintf(stderr, "%s not found.\n", "test/t.bee");
+        exit(1);
+    }
+    fread(msgBuf, 1, 1024, fp);
+    parser = BEE_CreateParser();
+//    BEE_Compile(parser, fp);
+    BEE_CompileStr(parser, msgBuf);
+    BEE_Parse(parser);
+    BEE_DestroyParser(parser);
 
-//    fp = fopen("test/test.bee", "r");
-//    if (fp == NULL) {
-//        fprintf(stderr, "%s not found.\n", "test/test.bee");
-//        exit(1);
-//    }
-//    interpreter = BEE_CreateParser();
-//    BEE_Compile(interpreter, fp);
-//    BEE_Parse(interpreter);
-//    BEE_DestroyParser(interpreter);
-
-
+#endif
 
     MEM_dump_blocks(stdout);
 

@@ -335,6 +335,45 @@ Statement * beeCreateForStatement(Expression *init, Expression *cond, Expression
     return st;
 }
 
+Statement * beeCreateForInRangeStatement(char *identifier, Expression *initExp,
+                                         Expression *endExp, Expression *stepExp,Block *block)
+{
+    Statement *st;
+    Expression *mInitEx;
+    Expression *mAddExp;
+    Expression *mStepEx;
+
+    st = allocStatement(FOR_STATEMENT);
+    Expression * identifierExp = beeCreateIdentifierExpression(identifier);
+    if (initExp == NULL)
+    {
+        mInitEx = beeAllocExpression(INT_EXPRESSION);
+        mInitEx->u.long_value = 0;
+        st->u.for_s.init = beeCreateAssignExpression(identifier, mInitEx);
+    }
+    else
+    {
+        st->u.for_s.init = beeCreateAssignExpression(identifier, initExp);
+    }
+
+    st->u.for_s.condition = beeCreateBinaryExpression(LT_EXPRESSION, identifierExp, endExp);
+    if (stepExp == NULL)
+    {
+        mStepEx = beeAllocExpression(INT_EXPRESSION);
+        mStepEx->u.long_value = 1;
+        mAddExp = beeCreateBinaryExpression(ADD_EXPRESSION, identifierExp, mStepEx);
+        st->u.for_s.post = beeCreateAssignExpression(identifier, mAddExp);
+    }
+    else
+    {
+        mAddExp = beeCreateBinaryExpression(ADD_EXPRESSION, identifierExp, stepExp);
+        st->u.for_s.post = beeCreateAssignExpression(identifier, mAddExp);
+    }
+    st->u.for_s.block = block;
+
+    return st;
+}
+
 Block * beeCreateBlock(StatementList *statement_list)
 {
     Block *block;

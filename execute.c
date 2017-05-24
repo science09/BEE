@@ -301,26 +301,31 @@ static StatementResult executeStatement(BEE_Parser *parser, LocalEnvironment *en
             DBG_panic(("bad case...%d", statement->type));
     }
 
-    if (result.type == NORMAL_STATEMENT_RESULT)
+    if(parser->debugMode)
     {
-        rtnValue = result.u.return_value;
-        switch(rtnValue.type)
+        if (result.type == NORMAL_STATEMENT_RESULT)
         {
-            case BEE_BOOLEAN_VALUE:
-                printf("value = %s\n", (rtnValue.u.boolean_value == 1) ? "true" : "false");
-                break;
-            case BEE_LONG_VALUE:
-                printf("value = %ld = 0x%lx\n", rtnValue.u.long_value, rtnValue.u.long_value);
-                break;
-            case BEE_DOUBLE_VALUE:
-                printf("value = %lf\n", rtnValue.u.double_value);
-                break;
-            case BEE_STRING_VALUE:
-                printf("value = %s\n", rtnValue.u.string_value->string);
-                break;
-            default:
-                printf("unimplemented type(%d)!\n", rtnValue.type);
-                break;
+            rtnValue = result.u.return_value;
+            switch(rtnValue.type)
+            {
+                case BEE_BOOLEAN_VALUE:
+                    printf("value = %s\n", (rtnValue.u.boolean_value == 1) ? "true" : "false");
+                    break;
+                case BEE_LONG_VALUE:
+                    printf("value = %ld = 0x%lx\n", rtnValue.u.long_value, rtnValue.u.long_value);
+                    break;
+                case BEE_DOUBLE_VALUE:
+                    printf("value = %lf\n", rtnValue.u.double_value);
+                    break;
+                case BEE_STRING_VALUE:
+                    printf("value = %s\n", rtnValue.u.string_value->string);
+                    break;
+                case BEE_NULL_VALUE:
+                    break;
+                default:
+//                printf("unimplemented type(%d)!\n", rtnValue.type);
+                    break;
+            }
         }
     }
 

@@ -290,6 +290,7 @@ struct BEE_Parser_tag {
     char                *st_string_literal_buffer;
     size_t              st_string_literal_buffer_size;
     size_t              st_string_literal_buffer_alloc_size;
+    int                 debugMode;
 };
 
 
@@ -319,6 +320,8 @@ Elsif     *beeChainElseIfList(Elsif *list, Elsif *add);
 Elsif     *beeCreateElseIf(Expression *expr, Block *block);
 Statement *beeCreateWhileStatement(Expression *condition, Block *block);
 Statement *beeCreateForStatement(Expression *init, Expression *cond, Expression *post, Block *block);
+Statement *beeCreateForInRangeStatement(char *identifier, Expression *initExp, Expression *endExp,
+                                        Expression *stepExp,Block *block);
 Block     *beeCreateBlock(StatementList *statement_list);
 Statement *beeCreateExpressionStatement(Expression *expression);
 Statement *beeCreateReturnStatement(Expression *expression);

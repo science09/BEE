@@ -46,7 +46,7 @@ typedef struct IdentifierList;
 %token FUNCTION IF ELSE ELSIF WHILE FOR RETURN_T BREAK CONTINUE NULL_T
         LP RP LC RC SEMICOLON COMMA ASSIGN LOGICAL_AND LOGICAL_OR
         EQ NE GT GE LT LE ADD SUB MUL DIV MOD LSHIFT RSHIFT
-        BIT_AND BIT_OR BIT_XOR TRUE_T FALSE_T GLOBAL_T
+        BIT_AND BIT_OR BIT_XOR TRUE_T FALSE_T GLOBAL_T IN_T RANGE_T
 %type   <parameter_list> parameter_list
 %type   <argument_list> argument_list
 %type   <expression> expression expression_opt
@@ -302,6 +302,10 @@ if_statement
         {
             $$ = beeCreateIfStatement($3, $5, NULL, NULL);
         }
+        | IF expression block
+        {
+            $$ = beeCreateIfStatement($2, $3, NULL, NULL);
+        }
         | IF LP expression RP block ELSE block
         {
             $$ = beeCreateIfStatement($3, $5, NULL, $7);
@@ -339,6 +343,18 @@ for_statement
           expression_opt RP block
         {
             $$ = beeCreateForStatement($3, $5, $7, $9);
+        }
+        | FOR IDENTIFIER IN_T RANGE_T INT_LITERAL block
+        {
+            $$ = beeCreateForInRangeStatement($2, NULL, $5, NULL, $6);
+        }
+        | FOR IDENTIFIER IN_T RANGE_T INT_LITERAL INT_LITERAL block
+        {
+            $$ = beeCreateForInRangeStatement($2, $5, $6, NULL, $7);
+        }
+        | FOR IDENTIFIER IN_T RANGE_T INT_LITERAL INT_LITERAL INT_LITERAL block
+        {
+            $$ = beeCreateForInRangeStatement($2, $5, $6, $7, $8);
         }
         ;
 expression_opt

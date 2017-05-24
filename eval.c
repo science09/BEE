@@ -723,7 +723,6 @@ static BEE_Value evalFunctionCallExpression(BEE_Parser *parser, LocalEnvironment
 
     char *identifier = expr->u.function_call_expression.identifier;
 
-
     func = beeSearchFunction(identifier);
     if (func == NULL)
     {
@@ -763,7 +762,7 @@ static BEE_Value evalFunctionCallExpression(BEE_Parser *parser, LocalEnvironment
         parser->function_list = func;
         value = callBeeFunction(parser, env, expr, func);
         printf("function called!\n");
-        exit(1);
+
 //        beeRuntimeError(expr->line_number, FUNCTION_NOT_FOUND_ERR,
 //                          STRING_MESSAGE_ARGUMENT, "name", identifier,
 //                          MESSAGE_ARGUMENT_END);
@@ -773,11 +772,9 @@ static BEE_Value evalFunctionCallExpression(BEE_Parser *parser, LocalEnvironment
         switch (func->type)
         {
             case BEE_FUNCTION_DEFINITION:
-                printf("BEE_FUNCTION_DEFINITION\n");
                 value = callBeeFunction(parser, env, expr, func);
                 break;
             case BUILTIN_FUNCTION_DEFINITION:
-                printf("BUILTIN_FUNCTION_DEFINITION\n");
                 value = callBuiltinFunction(parser, env, expr, func->u.native_f.proc);
                 break;
             default:

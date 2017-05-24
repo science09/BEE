@@ -21,13 +21,17 @@ static void increment_line_number(void)
 %%
 <INITIAL>"function"     return FUNCTION;
 <INITIAL>"if"           return IF;
+<INITIAL>"RunKeywordIf" return IF;
 <INITIAL>"else"         return ELSE;
 <INITIAL>"elsif"        return ELSIF;
 <INITIAL>"while"        return WHILE;
 <INITIAL>"for"          return FOR;
 <INITIAL>"return"       return RETURN_T;
 <INITIAL>"break"        return BREAK;
+<INITIAL>"ExitForLoop"  return BREAK;
 <INITIAL>"continue"     return CONTINUE;
+<INITIAL>"in"           return IN_T;
+<INITIAL>"range"        return RANGE_T;
 <INITIAL>"null"         return NULL_T;
 <INITIAL>"true"         return TRUE_T;
 <INITIAL>"false"        return FALSE_T;
@@ -90,7 +94,7 @@ static void increment_line_number(void)
     BEGIN STRING_LITERAL_STATE;
 }
 <INITIAL>[ \t] ;
-<INITIAL>\n {increment_line_number(); return SEMICOLON;}
+<INITIAL>\n {increment_line_number(); }
 <INITIAL>#     BEGIN COMMENT;
 <INITIAL>.      {
     char buf[LINE_BUF_SIZE];
